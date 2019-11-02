@@ -18,7 +18,7 @@ impl PartialEq for Racer {
     }
 }
 
-pub fn floyd_cycle_entry_detection(vector: &Vec<u64>) -> (u64, usize, usize) {
+pub fn floyd_cycle_entry_detection(vector: &Vec<u64>) -> (u64, usize, usize, u64) {
     // Root is at the end of the vector
     let root = vector.len() - 1;
     let tortoise = &mut Racer {
@@ -33,9 +33,12 @@ pub fn floyd_cycle_entry_detection(vector: &Vec<u64>) -> (u64, usize, usize) {
     vec_jump(&vector, tortoise, 1);
     vec_jump(&vector, hare, 2);
 
+    let mut iter: u64 = 1;
     while tortoise != hare {
+        // dbg!(&tortoise, &hare);
         vec_jump(&vector, tortoise, 1);
         vec_jump(&vector, hare, 2);
+        iter += 1;
     } // Tortoise and hare meet in the cycle
 
     // Tortoise and hare meet!
@@ -47,15 +50,16 @@ pub fn floyd_cycle_entry_detection(vector: &Vec<u64>) -> (u64, usize, usize) {
     tortoise.val = vector[root];
 
     while tortoise != hare {
-        // dbg!(&tortoise, &hare);
         vec_jump(&vector, tortoise, 1);
         vec_jump(&vector, hare, 1);
+        iter += 1;
     } // Tortoise and hare meet at the entry point
 
     return (
         tortoise.val,
         cmp::min(tortoise.pos, hare.pos),
         cmp::max(tortoise.pos, hare.pos),
+        iter
     );
 }
 
